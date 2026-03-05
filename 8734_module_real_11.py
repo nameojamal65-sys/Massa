@@ -1,0 +1,9 @@
+# core/module_real_11.py
+def run():
+    print('تشغيل الملف الحقيقي: core/module_real_11.py')
+    x = 17
+    y = 70
+    print('نتيجة الذكاء الاصطناعي:', x + y)
+
+if __name__ == "__main__":
+    run()

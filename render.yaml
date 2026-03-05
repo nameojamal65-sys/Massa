@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: massa-imperial-core
+    env: docker
+    plan: free
+    region: oregon
+    envVars:
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: MASA_MODE
+        value: AUTONOMOUS
+
+  - type: static
+    name: massa-imperial-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishDir: dist
