@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: massa-bot
-    env: node
-    buildCommand: "rm -rf node_modules && npm install && npm run build || npm install"
-    startCommand: "node index.js"
-    rootDir: "."
