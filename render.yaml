@@ -1,9 +1,11 @@
 services:
   - type: web
-    name: massa-bot
-    env: node
-    buildCommand: "npm install"
-    startCommand: "node src/index.js"
+    name: massa-bot-pro
+    runtime: node
+    buildCommand: npm install
+    startCommand: node src/index.js
     envVars:
       - key: NODE_VERSION
-        value: 18.x
+        value: "18"
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
