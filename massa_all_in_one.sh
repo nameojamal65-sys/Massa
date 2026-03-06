@@ -1,53 +1,47 @@
 #!/bin/bash
-# Massa All-in-One Engine v6.0
 
-# 1. تعريف الهوية
-KEY=$(cat .render_key 2>/dev/null)
-[ -z "$KEY" ] && { echo "[!] خطأ: ملف .render_key مفقود."; exit 1; }
+# دالة التأكد من التوكن
+ensure_token() {
+    if [ ! -f .github_token ] || [ ! -s .github_token ]; then
+        echo "[!] لم يتم العثور على التوكن. يرجى إدخال GitHub Personal Access Token:"
+        read -s token
+        echo "$token" > .github_token
+        echo "[✓] تم حفظ التوكن بنجاح."
+    fi
+}
 
-# 2. إنشاء خريطة البناء (render.yaml)
-echo "[*] جاري إنشاء خريطة البناء (render.yaml)..."
-cat <<EOF > render.yaml
-services:
-  - type: web
-    name: massa-bot-pro
-    runtime: node
-    buildCommand: npm install
-    startCommand: node src/index.js
-    envVars:
-      - key: NODE_VERSION
-        value: "18"
-      - key: NPM_CONFIG_PRODUCTION
-        value: "false"
-EOF
+check_deploy_status() {
+    ensure_token
+    echo "[*] جاري فحص حالة البناء على GitHub..."
+    TOKEN=$(cat .github_token)
+    curl -s -H "Authorization: token $TOKEN" \
+         https://api.github.com/repos/nameojamal65-sys/Massa/actions/runs \
+         | jq -r '.workflow_runs[0] | "الحالة: \(.status) | النتيجة: \(.conclusion)"'
+}
 
-# 3. قائمة العمليات التفاعلية
-echo "======================================"
-echo "      MASA ALL-IN-ONE ENGINE"
-echo "======================================"
-echo "1) دفع الإعدادات للـ GitHub (Git Push)"
-echo "2) فرض إعادة البناء (Force Deploy)"
-echo "3) فحص حالة الخدمة"
-echo "======================================"
-read -p "[?] اختر العملية (1-3): " CHOICE
+echo "================================"
+echo "      MASA MASTER ENGINE v2.1"
+echo "================================"
+echo "1) دفع التحديثات (Push & Deploy)"
+echo "2) مراقبة الحالة (GitHub Monitor)"
+echo "3) خروج"
+echo "================================"
+read -p "[?] اختر العملية: " choice
 
-case $CHOICE in
+case $choice in
     1)
-        git add render.yaml
-        git commit -m "Add render.yaml for auto-deploy"
+        git add .
+        git commit -m "Auto-Deploy: $(date)"
         git push
-        echo "[✓] تم دفع الإعدادات للـ GitHub."
+        echo "[✓] تم الرفع! البناء جارٍ الآن في الخلفية."
         ;;
     2)
-        read -p "أدخل Service ID الخاص بك: " SID
-        echo "[*] جاري فرض البناء..."
-        curl -X POST "https://api.render.com/v1/services/$SID/deploys" \
-             -H "Authorization: Bearer $KEY"
-        echo "[✓] تم إرسال أمر البناء."
+        check_deploy_status
         ;;
     3)
-        read -p "أدخل Service ID الخاص بك: " SID
-        curl -s -H "Authorization: Bearer $KEY" "https://api.render.com/v1/services/$SID" | jq .
+        exit 0
         ;;
-    *) echo "[!] اختيار غير صحيح." ;;
+    *)
+        echo "[!] اختيار غير صحيح."
+        ;;
 esac
