@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: massa-bot
-    env: node
-    buildCommand: "cd src && npm install"
-    startCommand: "cd src && node index.js"
-    rootDir: "."
