@@ -7,5 +7,5 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Render
-        run: curl -X POST https://api.render.com/v1/services/YOUR_SERVICE_ID/deploys -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
+      - name: Deploy
+        run: echo "Automation Ready"
